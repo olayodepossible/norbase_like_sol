@@ -7,46 +7,65 @@ public class LikeService : ILikeService
         _context = context;
     }
 
-    public async Task<LikeResponseDto> ToggleLikeAsync(string articleId, string userId)
+    public async Task<LikeResponseDto> ToggleLikeAsync(string articleId, string transaction)
+    // public async Task<LikeResponseDto> ToggleLikeAsync(string articleId, string userId, string transaction)
     {
-        var existingLike = await _context.Likes
-            .FirstOrDefaultAsync(l => l.ArticleId == articleId && l.UserId == userId);
-
-        var article = await _context.Articles
-            .FirstOrDefaultAsync(a => a.Id == articleId);
-
-        if (article == null)
-            throw new NotFoundException("Article not found");
-
-        if (existingLike == null)
+        try
         {
-            // Add new like
-            var like = new Like
+            var existingLike = await _context.Likes
+            .FirstOrDefaultAsync(l => l.ArticleId == articleId);
+
+            // var existingLike = await _context.Likes
+            // .FirstOrDefaultAsync(l => l.ArticleId == articleId && l.UserId == userId);
+
+            var article = await _context.Articles
+                .FirstOrDefaultAsync(a => a.Id == articleId);
+
+            if (article == null)
+                throw new NotFoundException("Article not found");
+
+            if (existingLike == null)
             {
-                ArticleId = articleId,
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
+                // Add new like
+                var like = new Like
+                {
+                    ArticleId = articleId,
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _context.Likes.AddAsync(like);
+                article.LikesCount++;
+            }
+            else
+            {
+            // Unlike the article
+                _context.Likes.Remove(existingLike);
+                article.LikesCount--;
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return new LikeResponseDto
+            {
+                TotalLikes = article.LikesCount,
+                IsLikedByUser = existingLike == null
             };
-            _context.Likes.Add(like);
-            article.LikesCount++;
+            
         }
-        else
+        catch (Exception)
         {
-            // Remove existing like
-            _context.Likes.Remove(existingLike);
-            article.LikesCount--;
+            await transaction.RollbackAsync();
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
         }
-
-        await _context.SaveChangesAsync();
-
-        return new LikeResponseDto
-        {
-            TotalLikes = article.LikesCount,
-            IsLikedByUser = existingLike == null
-        };
+        
     }
 
-    public async Task<LikeResponseDto> GetLikeStatusAsync(string articleId, string userId)
+
+
+
+    public async Task<LikeResponseDto> GetLikeStatusAsync(string articleId)
+    // public async Task<LikeResponseDto> GetLikeStatusAsync(string articleId, string userId)
     {
         var article = await _context.Articles
             .FirstOrDefaultAsync(a => a.Id == articleId);
