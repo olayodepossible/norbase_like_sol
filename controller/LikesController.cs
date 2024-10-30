@@ -1,18 +1,24 @@
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class LikesController : ControllerBase
 {
+
+    private readonly ApplicationDbContext _context;
+
     private readonly ILikeService _likeService;
 
-    public LikesController(ILikeService likeService)
+    public LikesController(ApplicationDbContext context, ILikeService likeService)
     {
+        _context = context;
         _likeService = likeService;
     }
 
     [HttpPost("{articleId}/toggle")]
     public async Task<ActionResult<LikeResponseDto>> ToggleLike(string articleId)
     {
-        var userId = User.GetUserId(); // Assuming you have a method to get the current user's ID
+        // Extract user ID from JWT token
+        var userId = int.Parse(User.FindFirst("UserId")?.Value);
         var result = await _likeService.ToggleLikeAsync(articleId, userId);
         return Ok(result);
     }
