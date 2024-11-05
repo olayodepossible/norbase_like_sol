@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Blog_Like.Migrations
 {
-    public partial class InitialMigraton : Migration
+    public partial class Initial_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -70,20 +70,20 @@ namespace Blog_Like.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ArticleId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ArticleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ArticleId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Likes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Likes_Articles_ArticleId1",
-                        column: x => x.ArticleId1,
+                        name: "FK_Likes_Articles_ArticleId",
+                        column: x => x.ArticleId,
                         principalTable: "Articles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -92,9 +92,10 @@ namespace Blog_Like.Migrations
                 column: "ArticleId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Likes_ArticleId1",
+                name: "IX_Likes_ArticleId_UserId",
                 table: "Likes",
-                column: "ArticleId1");
+                columns: new[] { "ArticleId", "UserId" },
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

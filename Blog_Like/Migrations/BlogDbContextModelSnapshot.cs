@@ -94,11 +94,7 @@ namespace Blog_Like.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("ArticleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("ArticleId1")
+                    b.Property<Guid>("ArticleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -107,13 +103,13 @@ namespace Blog_Like.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArticleId1");
+                    b.HasIndex("ArticleId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("Likes");
                 });
@@ -158,7 +154,9 @@ namespace Blog_Like.Migrations
                 {
                     b.HasOne("MyBlog.Model.Domains.Article", null)
                         .WithMany("Likes")
-                        .HasForeignKey("ArticleId1");
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyBlog.Model.Domains.Article", b =>
