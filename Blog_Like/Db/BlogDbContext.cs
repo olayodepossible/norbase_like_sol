@@ -17,6 +17,12 @@ namespace MyBlog.Db
         public DbSet<Article> Articles { get; set; }
         public DbSet<BlogComment> Comments { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Like>().HasIndex(l => new { l.ArticleId, l.UserId })
+                .IsUnique();
+        }
+
 
     }
 }

@@ -1,4 +1,7 @@
+using Blog_Like.Repository;
+using Microsoft.EntityFrameworkCore;
 using MyBlog.Db;
+using MyBlog.Model.Domains;
 using MyBlog.Model.Dto;
 
 public class LikeService : ILikeService
@@ -10,21 +13,22 @@ public class LikeService : ILikeService
         _context = context;
     }
 
-    public async Task<LikeResponseDto> ToggleLikeAsync(string articleId, string transaction)
+    public async Task<LikeResponseDto> ToggleLikeAsync(Guid articleId, Guid userId)
     // public async Task<LikeResponseDto> ToggleLikeAsync(string articleId, string userId, string transaction)
     {
+        using var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
         try
         {
-            var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.ArticleId == articleId);
-
-            // var existingLike = await _context.Likes
-            // .FirstOrDefaultAsync(l => l.ArticleId == articleId && l.UserId == userId);
+            //var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.ArticleId == articleId);
+          
+            var existingLike = await _context.Likes
+            .FirstOrDefaultAsync(l => l.ArticleId == articleId && l.UserId == userId);
 
             var article = await _context.Articles
                 .FirstOrDefaultAsync(a => a.Id == articleId);
 
             if (article == null)
-                throw new NotFoundException("Article not found");
+                throw new NotFound("Article not found");
 
             if (existingLike == null)
             {
@@ -33,7 +37,8 @@ public class LikeService : ILikeService
                 {
                     ArticleId = articleId,
                     UserId = userId,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 await _context.Likes.AddAsync(like);
                 article.LikesCount++;
@@ -58,22 +63,19 @@ public class LikeService : ILikeService
         catch (Exception)
         {
             await transaction.RollbackAsync();
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
+            throw new NotFound("Article not found");
         }
         
     }
 
-
-
-
-    public async Task<LikeResponseDto> GetLikeStatusAsync(string articleId)
+    public async Task<LikeResponseDto> GetLikeStatusAsync(Guid articleId, Guid userId)
     // public async Task<LikeResponseDto> GetLikeStatusAsync(string articleId, string userId)
     {
         var article = await _context.Articles
             .FirstOrDefaultAsync(a => a.Id == articleId);
 
         if (article == null)
-            throw new NotFoundException("Article not found");
+            throw new NotImplementedException("Article not found");
 
         var isLikedByUser = await _context.Likes
             .AnyAsync(l => l.ArticleId == articleId && l.UserId == userId);

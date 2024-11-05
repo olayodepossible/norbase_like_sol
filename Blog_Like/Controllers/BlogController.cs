@@ -9,32 +9,31 @@ namespace Blog_Like.Controllers
     [ApiController]
     public class BlogController : ControllerBase
     {
-        private readonly BlogDbContext _context;
 
         private readonly ILikeService _likeService;
 
-        public LikesController(BlogDbContext context, ILikeService likeService)
+        public BlogController( ILikeService likeService)
         {
-            _context = context;
             _likeService = likeService;
         }
 
-        [HttpPost("{articleId}/toggle")]
-        public async Task<ActionResult<LikeResponseDto>> ToggleLike(string articleId)
+        [HttpPost("toggle/{articleId:Guid}/{userId:Guid}")]
+        //[Route("{userId:Guid}")]
+        public async Task<ActionResult<LikeResponseDto>> ToggleLike([FromRoute] Guid articleId, [FromRoute] Guid userId)
         {
             // Extract user ID from JWT token
-            // var userId = int.Parse(User.FindFirst("UserId")?.Value);
-            using var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
-            var result = await _likeService.ToggleLikeAsync(articleId, transaction);
-            // var result = await _likeService.ToggleLikeAsync(articleId, userId, transaction);
+             // var userId = Guid.Parse(User.FindFirst("UserId")?.Value);
+            var result = await _likeService.ToggleLikeAsync(articleId, userId);
             return Ok(result);
         }
 
-        [HttpGet("{articleId}/status")]
-        public async Task<ActionResult<LikeResponseDto>> GetLikeStatus(string articleId)
+        [HttpGet("status/{articleId:Guid}/{userId:Guid}")]
+        //[Route("{userId:Guid}")]
+        public async Task<ActionResult<LikeResponseDto>> GetLikeStatus([FromRoute] Guid articleId, [FromRoute] Guid userId)
         {
-            // var userId = User.GetUserId();
-            var result = await _likeService.GetLikeStatusAsync(articleId);
+            //var userId = User.GetUserId();
+            //var userId = Guid.Parse(User.FindFirst("UserId")?.Value);
+            var result = await _likeService.GetLikeStatusAsync(articleId, userId);
             // var result = await _likeService.GetLikeStatusAsync(articleId, userId);
             return Ok(result);
         }

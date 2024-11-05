@@ -1,4 +1,4 @@
-using MyBlog.Db;
+/*using MyBlog.Db;
 
 public class LikeProcessorService : BackgroundService
 {
@@ -37,3 +37,4 @@ public class LikeProcessorService : BackgroundService
         }
     }
 }
+*/
