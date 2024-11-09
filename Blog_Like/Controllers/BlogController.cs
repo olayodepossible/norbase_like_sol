@@ -17,24 +17,17 @@ namespace Blog_Like.Controllers
             _likeService = likeService;
         }
 
-        [HttpPost("toggle/{articleId:Guid}/{userId:Guid}")]
-        //[Route("{userId:Guid}")]
-        public async Task<ActionResult<LikeResponseDto>> ToggleLike([FromRoute] Guid articleId, [FromRoute] Guid userId)
+        [HttpPost("toggle/{articleId:int}/{userId:int}")]
+        public async Task<ActionResult<LikeResponseDto>> ToggleLike([FromRoute] int articleId, [FromRoute] int userId)
         {
-            // Extract user ID from JWT token
-             // var userId = Guid.Parse(User.FindFirst("UserId")?.Value);
             var result = await _likeService.ToggleLikeAsync(articleId, userId);
             return Ok(result);
         }
 
-        [HttpGet("status/{articleId:Guid}/{userId:Guid}")]
-        //[Route("{userId:Guid}")]
-        public async Task<ActionResult<LikeResponseDto>> GetLikeStatus([FromRoute] Guid articleId, [FromRoute] Guid userId)
+        [HttpGet("status/{articleId:int}/{userId:int}")]
+        public async Task<ActionResult<LikeResponseDto>> GetLikeStatus([FromRoute] int articleId, [FromRoute] int userId)
         {
-            //var userId = User.GetUserId();
-            //var userId = Guid.Parse(User.FindFirst("UserId")?.Value);
             var result = await _likeService.GetLikeStatusAsync(articleId, userId);
-            // var result = await _likeService.GetLikeStatusAsync(articleId, userId);
             return Ok(result);
         }
     }

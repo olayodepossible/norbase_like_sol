@@ -12,14 +12,40 @@ namespace Blog_Like.Repository
         {
             this.dbContext = dbContext;
         }
-        public async Task<Article?> GetArticleById(Guid id)
+        public async Task<Article?> GetArticleById(int id)
         {
             return await dbContext.Articles.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task<User?> GetUserById(Guid id)
+        public async Task<Like?> GetLikeByUserIdAndArticleId(int userId, int articleId)
+        {
+           return await dbContext.Likes.FirstOrDefaultAsync(l => l.ArticleId == articleId && l.UserId == userId);
+        }
+
+        public async Task<int> GetLikeCountForArticle(int articleId)
+        {
+            return await dbContext.Likes
+                .CountAsync(like => like.ArticleId == articleId && like.HasLiked == true);
+        }
+
+        public async Task<User?> GetUserById(int id)
         {
             return await dbContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<Like> CreateLikeAsync(Like like)
+        {
+            await dbContext.Likes.AddAsync(like);
+            await dbContext.SaveChangesAsync();
+            return like;
+        }
+
+        public async Task<Like?> UpdateLikeAsync(Like existingLike)
+        {
+
+            existingLike.HasLiked = false;
+            await dbContext.SaveChangesAsync();
+            return existingLike;
         }
     }
 }

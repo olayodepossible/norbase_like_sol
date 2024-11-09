@@ -4,7 +4,7 @@ namespace MyBlog.Model.Domains
 {
     public class Article
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; }
         public string ArticleBody { get; set; }
         public int LikesCount { get; set; }

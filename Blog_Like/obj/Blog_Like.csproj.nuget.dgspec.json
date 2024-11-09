@@ -1,28 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\GODSON JONATHAN\\Documents\\C_Sharp_prj\\myBlog\\Blog_Like\\Blog_Like.csproj": {}
+    "/Users/comr_possible/Documents/C_Sharp/norbase_like_sol/Blog_Like/Blog_Like.csproj": {}
   },
   "projects": {
-    "C:\\Users\\GODSON JONATHAN\\Documents\\C_Sharp_prj\\myBlog\\Blog_Like\\Blog_Like.csproj": {
+    "/Users/comr_possible/Documents/C_Sharp/norbase_like_sol/Blog_Like/Blog_Like.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\GODSON JONATHAN\\Documents\\C_Sharp_prj\\myBlog\\Blog_Like\\Blog_Like.csproj",
+        "projectUniqueName": "/Users/comr_possible/Documents/C_Sharp/norbase_like_sol/Blog_Like/Blog_Like.csproj",
         "projectName": "Blog_Like",
-        "projectPath": "C:\\Users\\GODSON JONATHAN\\Documents\\C_Sharp_prj\\myBlog\\Blog_Like\\Blog_Like.csproj",
-        "packagesPath": "C:\\Users\\GODSON JONATHAN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\GODSON JONATHAN\\Documents\\C_Sharp_prj\\myBlog\\Blog_Like\\obj\\",
+        "projectPath": "/Users/comr_possible/Documents/C_Sharp/norbase_like_sol/Blog_Like/Blog_Like.csproj",
+        "packagesPath": "/Users/comr_possible/.nuget/packages/",
+        "outputPath": "/Users/comr_possible/Documents/C_Sharp/norbase_like_sol/Blog_Like/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\GODSON JONATHAN\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/comr_possible/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -50,7 +47,7 @@
               "target": "Package",
               "version": "[6.2.2, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.35, )"
             },
@@ -59,6 +56,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[6.0.35, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[6.0.3, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -84,7 +85,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.403/RuntimeIdentifierGraph.json"
         }
       }
     }

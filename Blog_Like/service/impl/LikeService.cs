@@ -7,83 +7,67 @@ using MyBlog.Model.Dto;
 public class LikeService : ILikeService
 {
     private readonly BlogDbContext _context;
+    private readonly IBlogRepository blogRepository;
 
-    public LikeService(BlogDbContext context)
+    public LikeService(IBlogRepository blogRepository)
     {
-        _context = context;
+        this.blogRepository = blogRepository;
     }
 
-    public async Task<LikeResponseDto> ToggleLikeAsync(Guid articleId, Guid userId)
-    // public async Task<LikeResponseDto> ToggleLikeAsync(string articleId, string userId, string transaction)
+    public async Task<LikeResponseDto> ToggleLikeAsync(int articleId, int userId)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
         try
         {
-            //var existingLike = await _context.Likes.FirstOrDefaultAsync(l => l.ArticleId == articleId);
           
-            var existingLike = await _context.Likes
-            .FirstOrDefaultAsync(l => l.ArticleId == articleId && l.UserId == userId);
+            var existingLike = await blogRepository.GetLikeByUserIdAndArticleId(userId, articleId);
 
-            var article = await _context.Articles
-                .FirstOrDefaultAsync(a => a.Id == articleId);
+            var article = await blogRepository.GetArticleById(articleId);
 
             if (article == null)
                 throw new NotFound("Article not found");
 
             if (existingLike == null)
             {
-                // Add new like
                 var like = new Like
                 {
                     ArticleId = articleId,
                     UserId = userId,
+                    HasLiked = true,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
-                await _context.Likes.AddAsync(like);
-                article.LikesCount++;
+                await blogRepository.CreateLikeAsync(like);
             }
             else
             {
-            // Unlike the article
-                _context.Likes.Remove(existingLike);
-                article.LikesCount--;
+                await blogRepository.UpdateLikeAsync(existingLike);
             }
 
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-
+            int likeCounts = await blogRepository.GetLikeCountForArticle(articleId);
             return new LikeResponseDto
             {
-                TotalLikes = article.LikesCount,
+                TotalLikes = likeCounts,
                 IsLikedByUser = existingLike == null
             };
             
         }
         catch (Exception)
         {
-            await transaction.RollbackAsync();
             throw new NotFound("Article not found");
         }
         
     }
 
-    public async Task<LikeResponseDto> GetLikeStatusAsync(Guid articleId, Guid userId)
-    // public async Task<LikeResponseDto> GetLikeStatusAsync(string articleId, string userId)
+    public async Task<LikeResponseDto> GetLikeStatusAsync(int articleId, int userId)
     {
-        var article = await _context.Articles
-            .FirstOrDefaultAsync(a => a.Id == articleId);
+        var isLikedByUser = await blogRepository.GetLikeByUserIdAndArticleId(userId, articleId);
 
-        if (article == null)
-            throw new NotImplementedException("Article not found");
-
-        var isLikedByUser = await _context.Likes
-            .AnyAsync(l => l.ArticleId == articleId && l.UserId == userId);
+        int likeCounts = await blogRepository.GetLikeCountForArticle(articleId);
 
         return new LikeResponseDto
         {
-            TotalLikes = article.LikesCount,
-            IsLikedByUser = isLikedByUser
+            TotalLikes = likeCounts,
+            IsLikedByUser = isLikedByUser == null
         };
     }
 }

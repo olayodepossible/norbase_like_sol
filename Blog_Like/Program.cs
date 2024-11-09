@@ -5,7 +5,7 @@ using MyBlog.Db;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+var connectionString = builder.Configuration.GetConnectionString("BlogProject");
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -14,7 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IBlogRepository, BlogSQLRepositoryImpl>();
 builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddDbContext<BlogDbContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BlogProject"));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+
 });
 
 var app = builder.Build();
