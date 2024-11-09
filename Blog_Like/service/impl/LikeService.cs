@@ -40,7 +40,9 @@ public class LikeService : ILikeService
             }
             else
             {
-                await blogRepository.UpdateLikeAsync(existingLike);
+                await blogRepository.UpdateLikeToggleAsync(existingLike);
+                
+                
             }
 
             int likeCounts = await blogRepository.GetLikeCountForArticle(articleId);

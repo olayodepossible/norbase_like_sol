@@ -40,10 +40,10 @@ namespace Blog_Like.Repository
             return like;
         }
 
-        public async Task<Like?> UpdateLikeAsync(Like existingLike)
+        public async Task<Like?> UpdateLikeToggleAsync(Like existingLike)
         {
-
-            existingLike.HasLiked = false;
+            existingLike.HasLiked = !existingLike.HasLiked;
+            existingLike.UpdatedAt = DateTime.UtcNow;
             await dbContext.SaveChangesAsync();
             return existingLike;
         }

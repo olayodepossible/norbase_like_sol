@@ -9,6 +9,6 @@ namespace Blog_Like.Repository
         Task<int> GetLikeCountForArticle(int articleId);
         Task<Like?> GetLikeByUserIdAndArticleId(int userId, int articleId);
         Task<Like> CreateLikeAsync(Like like);
-        Task<Like?> UpdateLikeAsync(Like existingLike);
+        Task<Like?> UpdateLikeToggleAsync(Like existingLike);
     }
 }
